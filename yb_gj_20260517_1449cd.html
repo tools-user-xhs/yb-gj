@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>外贸SOP查询工具 | 寄样到量产全流程</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f9fe;
+            font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            padding: 2rem 1.8rem;
+            color: #1a2c3e;
+            line-height: 1.45;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 页眉 */
+        .header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1a4c6e, #2a7f6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.2px;
+        }
+        .header p {
+            color: #4c6f8c;
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* 五大模块按钮 + 箭头连接区 */
+        .modules-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            background: #ffffffcc;
+            padding: 0.5rem 0.2rem;
+            border-radius: 60px;
+        }
+        .module-item {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 100px;
+        }
+        .module-btn {
+            background: #ffffff;
+            border: none;
+            padding: 0.9rem 0.5rem;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #1f5379;
+            border-radius: 2.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            text-align: center;
+            border: 1px solid #e2edf7;
+            flex: 1;
+            white-space: nowrap;
+        }
+        .module-btn:hover {
+            background: #eaf1f9;
+            transform: translateY(-2px);
+            border-color: #bdd4e8;
+        }
+        .module-btn.active {
+            background: #1e466e;
+            color: white;
+            border-color: #1e466e;
+            box-shadow: 0 6px 12px rgba(0,32,64,0.1);
+        }
+        .arrow-icon {
+            font-size: 1.6rem;
+            margin: 0 0.2rem;
+            color: #8aaec0;
+            font-weight: 400;
+            min-width: 32px;
+            text-align: center;
+        }
+        @media (max-width: 760px) {
+            .modules-flow {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.6rem;
+            }
+            .module-item {
+                width: 100%;
+            }
+            .arrow-icon {
+                display: none;
+            }
+            .module-btn {
+                width: 100%;
+            }
+        }
+
+        /* 主内容卡片 */
+        .content-panel {
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04);
+            padding: 1.8rem 2rem 2.2rem 2rem;
+            transition: all 0.2s;
+            border: 1px solid #eef3fc;
+            position: relative;
+        }
+
+        /* 模块头部区域（标题+一键收回按钮） */
+        .module-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e9f0f5;
+            padding-bottom: 0.6rem;
+        }
+        .module-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0b3552;
+            border-left: 6px solid #2b7a62;
+            padding-left: 1rem;
+            margin: 0;
+        }
+        .collapse-all-btn {
+            background: #edf3f9;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #2c6282;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .collapse-all-btn:hover {
+            background: #e0eaf3;
+            color: #1a4c6e;
+        }
+
+        /* 每个独立章节块 - 显著增加下边距，彻底解决拥挤问题 */
+        .sop-section {
+            margin-bottom: 2.5rem;      /* 增加模块之间的间距 */
+            border-radius: 20px;
+            background: #ffffff;
+            border-bottom: 1px solid #eef2f8;  /* 柔和分隔线，视觉上进一步分开 */
+            padding-bottom: 0.5rem;
+        }
+        /* 最后一个模块去除下边框和下边距，保持干净 */
+        .sop-section:last-of-type {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 0.6rem 0 0.6rem 0;
+            border-bottom: 2px solid #eef2f8;
+            transition: 0.2s;
+        }
+        .section-header h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #2c5a7a;
+            margin: 0;
+            letter-spacing: -0.2px;
+        }
+        .toggle-icon {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #6190b0;
+            transition: transform 0.2s;
+            background: #f0f4fa;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+        }
+        .section-content {
+            overflow: hidden;
+            transition: max-height 0.35s ease-out, margin 0.2s;
+            max-height: 2000px;
+            margin-top: 1rem;
+        }
+        .section-content.collapsed {
+            max-height: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        /* 细节盒子样式 */
+        .detail-box {
+            background: #fafcff;
+            border-radius: 20px;
+            padding: 1.2rem 1.5rem;
+            border-left: 4px solid #369e82;
+            font-size: 0.95rem;
+            line-height: 1.55;
+            color: #203e54;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            margin: 0.75rem 0;
+        }
+        .detail-list {
+            list-style: none;
+            padding-left: 0;
+            margin: 0.5rem 0;
+        }
+        .detail-list li {
+            margin-bottom: 0.7rem;
+            padding-left: 1.3rem;
+            position: relative;
+            line-height: 1.5;
+        }
+        .detail-list li::before {
+            content: "•";
+            color: #2b7a62;
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0;
+        }
+        .sub-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #2a6f6a;
+            margin: 0.8rem 0 0.3rem 0;
+        }
+        .grid-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 0.75rem 0 0.5rem 0;
+        }
+        .option-card {
+            background: #f4f9fe;
+            border-radius: 40px;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid #d9e6f5;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1f5e7e;
+            transition: 0.1s;
+        }
+        .option-card:hover {
+            background: #e6f0f9;
+            border-color: #b9d2ec;
+        }
+        .insight-point {
+            background: #fef9e8;
+            border-left: 4px solid #e6b12e;
+            padding: 0.9rem 1.2rem;
+            border-radius: 16px;
+            margin: 0.8rem 0;
+        }
+        footer {
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6f8eac;
+        }
+        /* 针对模块3和模块4特别增加额外下边距，确保“样板规格确认”和“项目跟进”之间有明显间距 */
+        .sop-section[data-section-id^="section_3"]:last-of-type,
+        .sop-section[data-section-id^="section_4"]:first-of-type {
+            margin-bottom: 2.8rem;
+        }
+        @media (max-width: 680px) {
+            body {
+                padding: 1rem;
+            }
+            .content-panel {
+                padding: 1.2rem;
+            }
+            .module-title {
+                font-size: 1.4rem;
+            }
+            .section-header h3 {
+                font-size: 1.15rem;
+            }
+            .collapse-all-btn {
+                padding: 0.3rem 0.8rem;
+                font-size: 0.75rem;
+            }
+            .sop-section {
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📦 外贸寄样 → 量产 SOP 查询工具</h1>
+        <p>专业流程指引 | 点击模块查看细则，支持一键收起所有细节</p>
+    </div>
+
+    <!-- 模块导航带箭头连接 -->
+    <div class="modules-flow">
+        <div class="module-item"><button class="module-btn" data-module="1">🔍 1-洞察分析</button></div>
+        <span class="arrow-icon">→</span>
+        <div class="module-item"><button class="module-btn" data-module="2">✍️ 2-协议谈判</button></div>
+        <span class="arrow-icon">→</span>
+        <div class="module-item"><button class="module-btn" data-module="3">📦 3-样板规格确认&包装寄件</button></div>
+        <span class="arrow-icon">→</span>
+        <div class="module-item"><button class="module-btn" data-module="4">📌 4-项目跟进</button></div>
+        <span class="arrow-icon">→</span>
+        <div class="module-item"><button class="module-btn" data-module="5">🏭 5-量产大货</button></div>
+    </div>
+
+    <div class="content-panel" id="dynamicContent">
+        <div style="text-align:center; color:#708faa;">加载中...</div>
+    </div>
+    <footer>✔ 点击任意模块切换流程 | 每个二级标题可单独展开/收回 | 一键收起当前模块全部内容</footer>
+</div>
+
+<script>
+    // ======================= 模块数据定义 =======================
+    const moduleData = {
+        1: {
+            title: "🔍 洞察分析 · 心法 & 实战步骤",
+            sections: [
+                {
+                    heading: "① 客户来意洞察 & 背景调查 (多维调查途径)",
+                    contentHtml: `
+                        <div class="detail-box">
+                            <div class="sub-title">🎯 心法精髓（分点阐述）:</div>
+                            <ul class="detail-list">
+                                <li><strong>判别客户类型：</strong> 终端品牌商 / 贸易商 / 经销商 / 竞对调研 —— 从询盘深度、问及认证、目标价格判断。</li>
+                                <li><strong>侧面侦察意图：</strong> 咨询产品具体应用场景？是否提及独家代理？对交期敏感程度如何？了解采购周期预判。</li>
+                                <li><strong>风险提示：</strong> 对过于专业的竞品参数提问留心竞争情报；免费寄多个地址需警惕套板。</li>
+                            </ul>
+                            <div class="sub-title">📌 背景调查途径（超具体·行动清单）:</div>
+                            <ul class="detail-list">
+                                <li><strong>公司官网 + LinkedIn：</strong> 核查公司规模、关键决策人履历、上下游业务吻合度。</li>
+                                <li><strong>海关数据（ImportGenius / Panjiva / 国别数据）：</strong> 反查采购频率、现有供应商及平均货量。</li>
+                                <li><strong>Google高级搜索：</strong> “公司名+exhibitor list” 看展会参与度；“公司名+complaint” 排查信誉风险。</li>
+                                <li><strong>B2B平台（阿里国际站/环球资源）：</strong> 历史询盘活跃度、评价及认证标识。</li>
+                                <li><strong>工商信息库（OpenCorporates / 美国SEC）：</strong> 核实注册存续状态及法律诉讼。</li>
+                                <li><strong>社交媒体（Facebook/IG/Twitter）：</strong> 品牌风格与市场定位，是否真实运营。</li>
+                                <li><strong>邮箱反查（Hunter.io / 验证邮箱后缀+企业域名一致性）：</strong> 确保不是个人邮箱。 </li>
+                            </ul>
+                        </div>
+                    `
+                },
+                {
+                    heading: "② 询盘意向程度判断模型 (专业外贸评估)",
+                    contentHtml: `
+                        <div class="detail-box">
+                            <div class="sub-title">✅ 高意向信号（分值高）:</div>
+                            <ul class="detail-list">
+                                <li>询价包含详细规格（尺寸/材质/克重/印刷细节）、明确目标价及最小起订量（MOQ）询问。</li>
+                                <li>主动提供公司税号/进口许可/要求寄样到公司地址并愿意承担运费或样品费。</li>
+                                <li>要求安排视频会议或厂验，询问交货周期和售后服务条款。</li>
+                            </ul>
+                            <div class="sub-title">⚠️ 低意向/试探信号:</div>
+                            <ul class="detail-list">
+                                <li>群发询盘不提及产品细节，只求报价单或目录册。</li>
+                                <li>要求多个免费样板寄不同地址、拒绝任何费用承担、回复迟缓或无后续。</li>
+                                <li>避开专业问题，只关心最低价，不透露终端市场。</li>
+                            </ul>
+                            <div class="insight-point"><strong>💡 专家补充：</strong> 对于意向模糊客户，可用“价值确认型邮件”测试响应（分享相似案例+打样周期），若三天无回复则为低优先级。</div>
+                        </div>
+                    `
+                },
+                {
+                    heading: "③ 沟通艺术：自然从容·降低客户戒备",
+                    contentHtml: `
+                        <div class="detail-box">
+                            <ul class="detail-list">
+                                <li><strong>话术示例：</strong> “为了匹配最佳方案，方便告知贵司主要应用市场及期望功能吗？” – 展现顾问姿态而非推销姿态。</li>
+                                <li><strong>不急于逼单：</strong> 前两次沟通聚焦价值输出（技术参数/产品认证/同类案例），避免“什么时候下单”等压迫性措辞。</li>
+                                <li><strong>非销售话题破冰：</strong> 分享当地市场趋势、物流注意事项或行业政策，塑造专业可靠形象。</li>
+                                <li><strong>应对戒备心强客户：</strong> 提供公司实地照片/质检报告，可签署保密协议，让客户感到透明安全。</li>
+                            </ul>
+                            <div class="sub-title">✨ 资深心法总结：</div>
+                            <div>优质大客户往往测试业务员耐心，持续输出专业价值并保持松弛感，样板阶段前建立信任，转化率提升60%以上。</div>
+                        </div>
+                    `
+                }
+            ]
+        },
+        2: {
+            title: "✍️ 2-协议谈判 · 费用模型与策略",
+            sections: [
+                {
+                    heading: "💰 四种费用承担场景 (点击卡片展示详情，再次点击收回)",
+                    contentHtml: `
+                        <div class="grid-cards" id="feeScenarioCards">
+                            <div class="option-card" data-scenario="1">① 样板免费 + 运费客户出</div>
+                            <div class="option-card" data-scenario="2">② 样板费客户出 + 运费客户出</div>
+                            <div class="option-card" data-scenario="3">③ 样板公司出 + 运费公司出</div>
+                            <div class="option-card" data-scenario="4">④ 样板费客户出 + 运费公司出</div>
+                        </div>
+                        <div id="scenarioDetailBox" class="detail-box" style="margin-top: 0.8rem;"></div>
+                    `
+                },
+                {
+                    heading: "⚖️ 谈判补充法则 & 风控",
+                    contentHtml: `
+                        <div class="detail-box">
+                            <ul class="detail-list">
+                                <li>高价值开模样板：需收取样板费，大货订单达到约定数量后返还。</li>
+                                <li>对于运费争议：可设置“免运费门槛”（如订单超$2000）。</li>
+                                <li>所有费用条款在形式发票中备注清晰，避免“免费样板无限索取”。</li>
+                            </ul>
+                        </div>
+                    `
+                }
+            ]
+        },
+        3: {
+            title: "📦 样板规格确认 & 包装寄件全流程",
+            sections: [
+                {
+                    heading: "📌 样板细节敲定 (点击细项展示/收回标准)",
+                    contentHtml: `
+                        <div class="grid-cards" id="sampleDetailsCards">
+                            <div class="option-card" data-detail="spec">规格尺寸</div>
+                            <div class="option-card" data-detail="material">具体材质</div>
+                            <div class="option-card" data-detail="pantone">潘通色号</div>
+                            <div class="option-card" data-detail="qty">样板数量</div>
+                            <div class="option-card" data-detail="receiver">收件人信息+邮箱验证</div>
+                        </div>
+                        <div id="sampleDetailDisplay" class="detail-box" style="margin-top: 0.5rem;"></div>
+                    `
+                },
+                {
+                    heading: "🔒 双保险：线上样板确认文档 (防扯皮)",
+                    contentHtml: `
+                        <div class="grid-cards"><div class="option-card" id="doubleInsuranceBtn">📄 签订线上样板确认文档</div></div>
+                        <div id="insuranceDisplay" class="detail-box" style="margin-top: 0.5rem;"></div>
+                    `
+                },
+                {
+                    heading: "📮 包装方式 & 快递单号闭环",
+                    contentHtml: `
+                        <div class="grid-cards"><div class="option-card" id="packShipBtn">📎 包装确认+寄出流程</div></div>
+                        <div id="packShipDisplay" class="detail-box" style="margin-top: 0.5rem;"></div>
+                    `
+                }
+            ]
+        },
+        4: {
+            title: "📌 4-项目跟进 · 样品发出后至量产前关键节点",
+            sections: [
+                {
+                    heading: "📬 关键跟进节点与心法",
+                    contentHtml: `<div class="detail-box"><ul class="detail-list"><li><strong>① 物流主动同步：</strong> 发货当天提供单号+查询链接，预清关提醒，帮客户减少麻烦。</li><li><strong>② 签收后48h内跟进：</strong> 确认收件完好性，主动提供测试对比报告 / 工艺优化说明。</li><li><strong>③ 意见收集&改进闭环：</strong> 记录修改需求，下发修改确认单，并抄送技术部门存档。</li><li><strong>④ 推动转产信号：</strong> 依据反馈频次，提供小批量试产优惠，锁定产能。</li><li><strong>⑤ 内部跟单看板：</strong> 每周邮件/会议同步客户反馈，确保样板问题回归至量产SOP。</li></ul></div>`
+                },
+                {
+                    heading: "📋 跟单辅助工具建议",
+                    contentHtml: `<div class="detail-box"><ul class="detail-list"><li>CRM系统 (HubSpot/Zoho) 记录沟通日志；</li><li>共享进度表（Notion/Excel）高亮待办；</li><li>设置日历提醒 签收后3天、7天、15天主动出击。</li></ul></div>`
+                }
+            ]
+        },
+        5: {
+            title: "🏭 5-量产大货 · 订单转化与品质管控",
+            sections: [
+                {
+                    heading: "✅ 量产启动准备清单 (分点)",
+                    contentHtml: `<div class="detail-box"><ul class="detail-list"><li>① 正式PI/合同签订（规格/包装/交期/付款条件）锁定封样。</li><li>② 生产指令单下发，配套金样（Golden Sample）至产线首件确认。</li><li>③ 关键物料IQC检验 + 中期DPI检验（产线30%-50%）。</li><li>④ 最终验货（FRI）：AQL标准抽检，可协调第三方验货如SGS。</li><li>⑤ 出货前核查唛头/标签/装箱单，完成订舱与报关资料。</li></ul></div>`
+                },
+                {
+                    heading: "📦 大货交付与复盘",
+                    contentHtml: `<div class="detail-box"><ul class="detail-list"><li>发货后提供提单/清关发票/箱单，协助目的港清关。</li><li>客户收货48h内回访质量满意度及售后承诺跟进。</li><li>量产复盘会议：记录生产难点，优化下次配合策略，提升复购率。</li></ul></div>`
+                }
+            ]
+        }
+    };
+
+    // 场景映射 + 样板细节映射 (功能保留)
+    const scenarioMap = {
+        1: "✔️ 样板免费，运费客户出 → 适用场景：常规样品（货值较低），大部分公平场景，展示诚意同时筛选真实买家。客户承担运费表明重视程度。",
+        2: "✔️ 样板费+运费均为客户出 → 适用场景：高价值定制样板（开模/特材），深度合作意向及防套板，技术壁垒产品首选。",
+        3: "✔️ 双方均由公司承担 → 适用场景：全球战略级大客户，新品PR推广，预算充足下使用，需审批。",
+        4: "✔️ 样板费客户出，运费公司出 → 适用场景：样板昂贵但运费较低/客户信誉优秀但运费预算紧张时提升谈判好感。"
+    };
+    const sampleDetailMap = {
+        spec: "📏 规格尺寸确认：提供2D/3D图纸，公差范围(±0.1mm)，双方邮件回复书面确认，防止尺寸偏差。",
+        material: "🧱 具体材质确认：明确材料牌号（如ABS、PC+ABS），提供物性表，并要求附材质证明报告。",
+        pantone: "🎨 潘通色号确认：确定Pantone色号及光泽度（高光/哑光），必要时寄出A4色样双方签字封存。",
+        qty: "🔢 样板所需数量：常规2~5pcs，如需破坏性测试或试装则增加备用样，明确大货订单返还规则。",
+        receiver: "👥 收件人信息标准化：完整公司名+全名+电话+街道地址+邮编；邮箱采用有效性测试（发送测试信并确认无退信），多个收件人需独立包裹并标注对应SKU。"
+    };
+
+    let currentModuleId = '1';
+
+    // 渲染模块，绑定每个section独立折叠 + 卡片交互 + 一键收起按钮
+    function renderModule(moduleId) {
+        const data = moduleData[moduleId];
+        if (!data) return;
+        // 构建头部（带一键收起按钮） 文字改为“一键收起”
+        const headerHtml = `
+            <div class="module-header-flex">
+                <div class="module-title">${data.title}</div>
+                <button class="collapse-all-btn" id="collapseAllBtn">📘 一键收起</button>
+            </div>
+        `;
+        let sectionsHtml = '';
+        data.sections.forEach((section, idx) => {
+            const sectionId = `section_${moduleId}_${idx}`;
+            sectionsHtml += `
+                <div class="sop-section" data-section-id="${sectionId}">
+                    <div class="section-header" data-toggle="${sectionId}">
+                        <h3>${section.heading}</h3>
+                        <span class="toggle-icon">−</span>
+                    </div>
+                    <div class="section-content" id="${sectionId}">
+                        ${section.contentHtml}
+                    </div>
+                </div>
+            `;
+        });
+        const fullHtml = headerHtml + sectionsHtml;
+        document.getElementById('dynamicContent').innerHTML = fullHtml;
+
+        // 绑定每个章节的折叠展开
+        const sectionHeaders = document.querySelectorAll('.section-header');
+        sectionHeaders.forEach(header => {
+            const targetId = header.getAttribute('data-toggle');
+            const contentDiv = document.getElementById(targetId);
+            const iconSpan = header.querySelector('.toggle-icon');
+            if (contentDiv) {
+                contentDiv.classList.remove('collapsed');
+                if (iconSpan) iconSpan.innerHTML = '−';
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isCollapsed = contentDiv.classList.contains('collapsed');
+                    if (isCollapsed) {
+                        contentDiv.classList.remove('collapsed');
+                        if (iconSpan) iconSpan.innerHTML = '−';
+                    } else {
+                        contentDiv.classList.add('collapsed');
+                        if (iconSpan) iconSpan.innerHTML = '+';
+                    }
+                });
+            }
+        });
+
+        // 一键收起当前模块所有细节 (所有section-content折叠)
+        const collapseBtn = document.getElementById('collapseAllBtn');
+        if (collapseBtn) {
+            const newBtn = collapseBtn.cloneNode(true);
+            collapseBtn.parentNode.replaceChild(newBtn, collapseBtn);
+            newBtn.addEventListener('click', () => {
+                const allContents = document.querySelectorAll('#dynamicContent .section-content');
+                allContents.forEach(content => {
+                    content.classList.add('collapsed');
+                });
+                const allIcons = document.querySelectorAll('#dynamicContent .toggle-icon');
+                allIcons.forEach(icon => {
+                    icon.innerHTML = '+';
+                });
+            });
+        }
+
+        // 模块2: 协议谈判场景卡片交互
+        if (moduleId === '2') {
+            const cardsContainer = document.getElementById('feeScenarioCards');
+            const scenarioDetailDiv = document.getElementById('scenarioDetailBox');
+            if (cardsContainer && scenarioDetailDiv) {
+                let activeScenarioKey = null;
+                const clearDetail = () => { scenarioDetailDiv.innerHTML = ''; activeScenarioKey = null; };
+                const showDetail = (text) => { scenarioDetailDiv.innerHTML = `<div>${text}</div>`; };
+                const cards = cardsContainer.querySelectorAll('.option-card');
+                cards.forEach(card => {
+                    const scenarioVal = card.getAttribute('data-scenario');
+                    card.style.cursor = 'pointer';
+                    card.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (activeScenarioKey === scenarioVal) {
+                            clearDetail();
+                        } else {
+                            const desc = scenarioMap[scenarioVal] || "暂无详细说明";
+                            showDetail(desc);
+                            activeScenarioKey = scenarioVal;
+                        }
+                    });
+                });
+                scenarioDetailDiv.innerHTML = '';
+            }
+        }
+
+        // 模块3: 样板细节 + 双保险 + 包装物流
+        if (moduleId === '3') {
+            const sampleCardsDiv = document.getElementById('sampleDetailsCards');
+            const sampleDetailDiv = document.getElementById('sampleDetailDisplay');
+            if (sampleCardsDiv && sampleDetailDiv) {
+                let activeDetailKey = null;
+                const clearDetail = () => { sampleDetailDiv.innerHTML = ''; activeDetailKey = null; };
+                const setDetail = (text) => { sampleDetailDiv.innerHTML = `<div>${text}</div>`; };
+                const detailCards = sampleCardsDiv.querySelectorAll('.option-card');
+                detailCards.forEach(card => {
+                    const detailKey = card.getAttribute('data-detail');
+                    card.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (activeDetailKey === detailKey) {
+                            clearDetail();
+                        } else {
+                            const text = sampleDetailMap[detailKey] || "请确认具体参数标准";
+                            setDetail(text);
+                            activeDetailKey = detailKey;
+                        }
+                    });
+                });
+                sampleDetailDiv.innerHTML = '';
+            }
+            // 双保险按钮
+            const insuranceBtn = document.getElementById('doubleInsuranceBtn');
+            const insuranceDisplay = document.getElementById('insuranceDisplay');
+            let insuranceActive = false;
+            if (insuranceBtn && insuranceDisplay) {
+                insuranceDisplay.innerHTML = '';
+                insuranceBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!insuranceActive) {
+                        insuranceDisplay.innerHTML = `<div><strong>📝 线上样板确认文档内容：</strong>包含样板高清照片、规格指标、色板编号、功能测试标准表。客户通过Docusign/邮件回复“样板确认无误”并存档，有效防止量产纠纷及不认账。签字确认后冻结所有参数。</div>`;
+                        insuranceActive = true;
+                    } else {
+                        insuranceDisplay.innerHTML = '';
+                        insuranceActive = false;
+                    }
+                });
+            }
+            // 包装物流
+            const packBtn = document.getElementById('packShipBtn');
+            const packDisplay = document.getElementById('packShipDisplay');
+            let packActive = false;
+            if (packBtn && packDisplay) {
+                packDisplay.innerHTML = '';
+                packBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!packActive) {
+                        packDisplay.innerHTML = `<div><strong>📮 包装方式确认细节：</strong> 防静电/气泡膜+外箱抗压测试，干燥剂+防水标签。<br>
+                        <strong>✈️ 寄件流程：</strong> 商业发票标注“样品”低价值，选择DHL/FedEx，预付关税可选。出单号后30分钟内WhatsApp/邮件发送单号+预计到达时间，清关文件同步附上。<br>
+                        <strong>📲 闭环：</strong> 每日主动追踪物流状态直至妥投，并告知客户注意事项。</div>`;
+                        packActive = true;
+                    } else {
+                        packDisplay.innerHTML = '';
+                        packActive = false;
+                    }
+                });
+            }
+        }
+    }
+
+    // 模块激活 & 按钮高亮 + 箭头流式导航
+    const btns = document.querySelectorAll('.module-btn');
+    function setActiveModule(moduleId) {
+        btns.forEach(btn => {
+            if (btn.getAttribute('data-module') === moduleId) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        renderModule(moduleId);
+        currentModuleId = moduleId;
+    }
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const moduleVal = btn.getAttribute('data-module');
+            if (moduleVal) setActiveModule(moduleVal);
+        });
+    });
+    // 初始加载模块1
+    setActiveModule('1');
+</script>
+</body>
+</html>
