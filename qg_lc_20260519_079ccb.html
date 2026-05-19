@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>欧洲清关流程SOP系统 | 外贸智能清关助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f4f8;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1a2c3e;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #1e466e, #0f2c44);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .header p {
+            color: #4a627a;
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+        .card-panel {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 260px;
+            padding: 1.5rem 1.8rem;
+            transition: all 0.2s;
+            border: 1px solid #e9edf2;
+        }
+        .card-panel h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1f4e7a;
+            border-left: 4px solid #2b7a62;
+            padding-left: 14px;
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .btn-primary {
+            background: #1f6e5c;
+            border: none;
+            padding: 0.7rem 1.6rem;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary:hover {
+            background: #0f5a4a;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(31,110,92,0.2);
+        }
+        .btn-outline {
+            background: white;
+            border: 1px solid #cad2db;
+            padding: 0.7rem 1.6rem;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #2c5a74;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #2b7a62;
+            color: #1f6e5c;
+        }
+        .btn-secondary {
+            background: #eef2f6;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2c5a74;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        /* 一键收起按钮样式 */
+        .btn-collapse {
+            background: #eef2fa;
+            border: 1px solid #cfdfed;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #2c5a74;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-left: 12px;
+        }
+        .btn-collapse:hover {
+            background: #e2eaf3;
+        }
+
+        .display-area {
+            background: white;
+            border-radius: 28px;
+            border: 1px solid #eef2f8;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+            padding: 1.8rem 2rem;
+            margin-top: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .flow-steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .step-card {
+            flex: 1;
+            min-width: 140px;
+            background: #fafcff;
+            border-radius: 24px;
+            padding: 1rem 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e2e9f0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .step-card.active-step {
+            border-color: #2b7a62;
+            background: #e9f6f0;
+            box-shadow: 0 6px 14px rgba(43,122,98,0.12);
+            transform: translateY(-1px);
+        }
+        .step-icon {
+            font-size: 2.8rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .step-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1f3b4c;
+        }
+        .step-desc {
+            font-size: 0.7rem;
+            color: #5a6e7c;
+            margin-top: 6px;
+        }
+
+        .step-detail-panel {
+            background: #f8fafd;
+            border-radius: 24px;
+            padding: 1.2rem 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 5px solid #2b7a62;
+        }
+        .detail-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .detail-text {
+            color: #2c4c6c;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 12px;
+        }
+        .btn-nav {
+            background: white;
+            border: 1px solid #cbdde9;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #1f6e5c;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: #eef3f0;
+            border-color: #2b7a62;
+        }
+        .btn-nav:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .files-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .file-item {
+            background: #ffffff;
+            border-radius: 18px;
+            border: 1px solid #e7edf3;
+            transition: 0.1s;
+            overflow: hidden;
+        }
+        .file-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.9rem 1.2rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #1f4e6e;
+            background: white;
+        }
+        .file-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+        .file-expand-icon {
+            font-size: 1.2rem;
+            color: #5e7e9c;
+            transition: transform 0.2s;
+        }
+        .file-detail {
+            border-top: 1px solid #ecf3f8;
+            padding: 1rem 1.2rem;
+            background: #fefefe;
+            font-size: 0.9rem;
+            color: #2a4e6e;
+            line-height: 1.45;
+        }
+        .files-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .empty-message {
+            text-align: center;
+            padding: 2rem;
+            color: #8ea3b5;
+            font-style: italic;
+        }
+        .status-tag {
+            font-size: 0.7rem;
+            background: #e9f3ef;
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 30px;
+            color: #1f6e5c;
+            margin-left: 10px;
+        }
+        @media (max-width: 720px) {
+            body { padding: 1rem; }
+            .step-card { min-width: 100px; }
+            .display-area { padding: 1.2rem; }
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #7d95ab;
+        }
+        button {
+            background: none;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📦 欧洲清关流程SOP系统</h1>
+        <p>合规 · 高效 · 可视化清关导航 | 欧盟进口清关智能助手（含预申报/认证管理）</p>
+    </div>
+
+    <div class="dashboard">
+        <!-- 模块1：清关全流程 -->
+        <div class="card-panel">
+            <h2>🚢 清关全流程 SOP</h2>
+            <div class="btn-group">
+                <button id="showFullSopBtn" class="btn-primary">📋 系统查看清关全流程SOP</button>
+            </div>
+            <div style="margin-top: 12px; font-size:0.8rem; color:#5c7f9c;">点击按钮展示完整步骤，点击任意卡片图标查看详情，当前步骤高亮显示</div>
+        </div>
+
+        <!-- 模块2：核心必备文件 -->
+        <div class="card-panel">
+            <h2>📄 核心必备文件</h2>
+            <div class="btn-group">
+                <button id="queryFilesBtn" class="btn-outline">🔍 查询必备核心文件</button>
+            </div>
+            <div style="margin-top: 12px; font-size:0.8rem; color:#5c7f9c;">点击查询展示文件及合规认证，再点击文件展开详情 | 一键收起所有</div>
+        </div>
+    </div>
+
+    <div class="display-area" id="globalDisplayArea">
+        <div class="empty-message" id="defaultEmptyMsg">
+            ✨ 选择上方功能 —— 点击“系统查看清关全流程SOP” 或 “查询必备核心文件” 开始使用
+        </div>
+    </div>
+    <footer>✔ 欧洲进口清关标准流程（新增：海关预申报）| 点击任意流程卡片高亮并展示详情 | 文件含EORI/CE/ROHS并支持一键收起</footer>
+</div>
+
+<script>
+    // ========================= 清关流程数据结构 (新增海关预申报) =========================
+    // 流程顺序: 开始(欧洲关境) → 海关预申报 → 正式申报 → 海关审核/查验 → 关税/增值税缴纳 → 海关放行
+    const flowSteps = [
+        { 
+            id: "start", 
+            name: "开始 (欧洲关境)", 
+            icon: "🚪🌍", 
+            shortDesc: "货物抵达欧盟关境",
+            detail: "📌 操作详情：\n1. 货物抵达港口/机场/边境口岸；\n2. 通知欧盟境内收货人及报关行；\n3. 收集基础物流单据，准备启动入境流程。"
+        },
+        { 
+            id: "preDeclaration", 
+            name: "海关预申报", 
+            icon: "📡⚡", 
+            shortDesc: "ENS + 安全申报",
+            detail: "📌 操作详情：\n• 提交入境摘要报关单(ENS – Entry Summary Declaration)；\n• 一般在货物抵达前在反恐/安全系统预申报；\n• 提供物流路线、承运人信息、货物预归类；\n• 获取预申报回执，降低查验风险。"
+        },
+        { 
+            id: "declaration", 
+            name: "正式申报", 
+            icon: "📑⚙️", 
+            shortDesc: "进口报关单提交",
+            detail: "📌 操作详情：\n• 通过报关系统提交进口报关单 (SAD)；\n• 确认HS编码、价值、原产地及贸易术语；\n• 上传商业发票、装箱单、运单等；\n• 海关系统接收并生成申报编号。"
+        },
+        { 
+            id: "customsCheck", 
+            name: "海关审核/查验", 
+            icon: "🔍🛃", 
+            shortDesc: "风险筛查/单证查验",
+            detail: "📌 操作详情：\n• 海关进行风险分析及选择性查验；\n• 可能触发文件审核、X光查验或物理掏箱；\n• 配合补充产地证、授权书等；\n• 查验通过则进入计税环节。"
+        },
+        { 
+            id: "taxPay", 
+            name: "关税/增值税缴纳", 
+            icon: "💰🧾", 
+            shortDesc: "核算并支付税费",
+            detail: "📌 操作详情：\n• 根据货值+关税税率 + 目的国VAT计算；\n• 使用递延账户或直接缴纳；\n• 获取付税证明；\n• 如有担保需核销担保额度。"
+        },
+        { 
+            id: "release", 
+            name: "海关放行", 
+            icon: "✅📦", 
+            shortDesc: "放行提货",
+            detail: "📌 操作详情：\n• 海关系统更新放行状态；\n• 获取放行通知( customs release notification )；\n• 安排末端配送或进入欧盟自由流通市场。"
+        }
+    ];
+
+    // 核心必备文件 + 新增 EORI号 / CE / ROHS等产品合规认证
+    const coreFiles = [
+        { name: "商业发票", detail: "📄 商业发票细节：\n• 必须包含卖方/买方完整信息；\n• 货物详细描述、HS编码、数量、单价及总金额；\n• 贸易术语 (Incoterms) 如FOB,CIF等；\n• 原产地声明，清关核心依据。" },
+        { name: "装箱单", detail: "📦 装箱单细节：\n• 每包件数、毛重净重、包装类型；\n• 集装箱或托盘明细；\n• 与商业发票信息一致，方便海关核对实物。" },
+        { name: "提单/空运单", detail: "🚢 运输单据细节：\n• 海运提单(Bill of Lading) 或 空运提单(AWB)；\n• 收货人/通知方信息，确保货权可控；\n• 欧洲清关必备承运人证明文件。" },
+        { name: "原产地证明", detail: "🏷️ 原产地证细节：\n• 如普惠制Form A或EUR.1证书；\n• 用于享受协定税率；\n• 需官方机构签发或REX注册自我声明。" },
+        { name: "欧盟进口报关单(SAD)", detail: "📑 SAD 统一行政单证细节：\n• 包含所有海关申报数据：价值、税号、关税类型；\n• 清关行代理准备电子/纸质。" },
+        { name: "EORI号", detail: "🔢 EORI (Economic Operators Registration and Identification) 细节：\n• 欧盟境内经营者唯一识别号；\n• 清关、过境、退税必备；\n• 进口报关时须填写EORI号码，用于海关追踪。" },
+        { name: "CE认证", detail: "⚙️ CE认证合规细节：\n• 证明产品符合欧盟健康、安全及环保标准；\n• 针对电子、机械、玩具等多品类强制；\n• 须提供符合性声明(DoC)及技术文件备查。" },
+        { name: "RoHS认证", detail: "🔄 RoHS合规细节：\n• 限制电子电气设备中有害物质指令；\n• 需提供RoHS检测报告或符合性声明；\n• 清关时可能被要求提交相关证书。" }
+    ];
+
+    // 状态管理
+    let currentFlowActive = false;      // 是否展示流程视图
+    let currentStepIndex = 0;           // 当前高亮的步骤索引（点击流程卡片时会更新，下一步按钮也会更新）
+    let selectedStepDetail = null;      // 当前展示详情的步骤对象（通过点击卡片设置）
+    let filesDisplayed = false;          // 是否展示文件视图
+    // 文件视图内部展开详情：我们采用每个文件独立展开/收起的对象（映射索引 -> 是否展开）
+    let expandedFileIndex = null;        // 当前展开详情的文件索引（一次仅展开一个，符合简洁交互，也可支持多个，但需求为点击展示细节，可单一展开）
+                                           // 但考虑到一键收起功能，使用单一展开最清晰。但需求没有严格限定同时只能展开一个，但是为了干净实现一键收起，维护一个map可以，但一键收起需要把所有展开关闭。
+    let expandedFilesMap = {};            // 记录每个文件是否展开，为了支持多展开和一键收起
+    
+    // DOM 元素
+    const displayArea = document.getElementById('globalDisplayArea');
+    const showSopBtn = document.getElementById('showFullSopBtn');
+    const queryFilesBtn = document.getElementById('queryFilesBtn');
+
+    // 辅助渲染: 根据状态渲染主区域
+    function render() {
+        if (currentFlowActive) {
+            renderFlowSopView();
+        } else if (filesDisplayed) {
+            renderFilesView();
+        } else {
+            displayArea.innerHTML = `<div class="empty-message">✨ 选择上方功能 —— 点击“系统查看清关全流程SOP” 或 “查询必备核心文件” 开始使用</div>`;
+        }
+    }
+
+    // 渲染清关全流程 (所有步骤展示, 高亮当前点击/通过下一步导航的步骤)
+    function renderFlowSopView() {
+        // 构建步骤卡片
+        let stepsHtml = `<div class="flow-steps">`;
+        flowSteps.forEach((step, idx) => {
+            const isActive = (idx === currentStepIndex);
+            const activeClass = isActive ? 'active-step' : '';
+            stepsHtml += `
+                <div class="step-card ${activeClass}" data-step-index="${idx}" data-step-id="${step.id}">
+                    <div class="step-icon">${step.icon}</div>
+                    <div class="step-name">${step.name}</div>
+                    <div class="step-desc">${step.shortDesc}</div>
+                </div>
+            `;
+        });
+        stepsHtml += `</div>`;
+        
+        // 详情展示区域: 如果selectedStepDetail存在则展示详情，否则展示轻提示（点图标展示）
+        let detailPanelHtml = '';
+        if (selectedStepDetail && selectedStepDetail.stepData) {
+            const step = selectedStepDetail.stepData;
+            detailPanelHtml = `
+                <div class="step-detail-panel">
+                    <div class="detail-title">
+                        <span>${step.icon}</span> ${step.name} 详细操作
+                    </div>
+                    <div class="detail-text">${step.detail.replace(/\n/g, '<br>')}</div>
+                </div>
+            `;
+        } else {
+            detailPanelHtml = `<div class="step-detail-panel" style="background:#F9FBFE; border-left-color:#b9d0df;"><div class="detail-text" style="color:#5e7e9c;">💡 点击任意步骤图标（卡片区域），即可查看该环节具体操作详情，并且该步骤会高亮显示</div></div>`;
+        }
+        
+        // 上一步下一步导航
+        const prevDisabled = currentStepIndex === 0;
+        const nextDisabled = currentStepIndex === flowSteps.length - 1;
+        const navButtons = `
+            <div class="nav-buttons">
+                <button class="btn-nav" id="prevStepBtn" ${prevDisabled ? 'disabled' : ''}>◀ 上一步</button>
+                <button class="btn-nav" id="nextStepBtn" ${nextDisabled ? 'disabled' : ''}>下一步 ▶</button>
+            </div>
+        `;
+        
+        const fullHtml = `
+            <div style="margin-bottom: 12px;">
+                <span style="font-weight:600; font-size:1rem;">📌 欧洲清关全流程导航（含海关预申报）</span>
+                <span class="status-tag">高亮当前步骤</span>
+            </div>
+            ${stepsHtml}
+            ${detailPanelHtml}
+            ${navButtons}
+            <div style="font-size:0.7rem; text-align:right; margin-top:12px; color:#8aaec0;">👉 点击任意步骤卡片可查看详情并自动高亮该步骤</div>
+        `;
+        displayArea.innerHTML = fullHtml;
+        
+        // 绑定卡片点击事件: 点击任意卡片，设置高亮索引为当前卡片并展示该卡片详情
+        const stepCards = document.querySelectorAll('.step-card');
+        stepCards.forEach((card, idx) => {
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const stepIdx = parseInt(card.getAttribute('data-step-index'), 10);
+                if (!isNaN(stepIdx) && flowSteps[stepIdx]) {
+                    // 更新高亮索引为当前点击步骤
+                    currentStepIndex = stepIdx;
+                    // 设置详情展示对象
+                    selectedStepDetail = { stepData: flowSteps[stepIdx] };
+                    // 重新渲染流程视图，实现高亮变化和详情变化
+                    renderFlowSopView();
+                }
+            });
+        });
+        
+        // 绑定下一步/上一步
+        const prevBtn = document.getElementById('prevStepBtn');
+        const nextBtn = document.getElementById('nextStepBtn');
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (currentStepIndex > 0) {
+                    currentStepIndex--;
+                    // 同时更新详情为新步骤的详情
+                    selectedStepDetail = { stepData: flowSteps[currentStepIndex] };
+                    renderFlowSopView();
+                }
+            });
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                if (currentStepIndex < flowSteps.length - 1) {
+                    currentStepIndex++;
+                    selectedStepDetail = { stepData: flowSteps[currentStepIndex] };
+                    renderFlowSopView();
+                }
+            });
+        }
+    }
+    
+    // 渲染文件视图: 支持点击文件单独展开细节，并增加一键收起所有内容的按钮
+    function renderFilesView() {
+        // 构建文件列表，为每个文件生成展开/收起区域
+        let filesListHtml = `<div class="files-header-row">
+                                <span style="font-weight:600;">📋 核心必备文件清单 + 合规认证</span>
+                                <button id="collapseAllFilesBtn" class="btn-collapse">🔽 一键收起所有内容</button>
+                            </div>
+                            <div class="files-list">`;
+        coreFiles.forEach((file, idx) => {
+            const isExpanded = expandedFilesMap[idx] === true;
+            const expandSymbol = isExpanded ? '▲' : '▼';
+            filesListHtml += `
+                <div class="file-item" data-file-idx="${idx}">
+                    <div class="file-header" data-expand-trigger="${idx}">
+                        <div class="file-name"><span>📎</span> ${file.name}</div>
+                        <div class="file-expand-icon">${expandSymbol}</div>
+                    </div>
+                    ${isExpanded ? `<div class="file-detail">${file.detail.replace(/\n/g, '<br>')}</div>` : ''}
+                </div>
+            `;
+        });
+        filesListHtml += `</div>`;
+        displayArea.innerHTML = filesListHtml;
+        
+        // 绑定每个文件头部的点击事件（展开/收起单个文件）
+        const fileItems = document.querySelectorAll('.file-item');
+        fileItems.forEach(item => {
+            const headerDiv = item.querySelector('.file-header');
+            if (headerDiv) {
+                const idxAttr = headerDiv.getAttribute('data-expand-trigger');
+                if (idxAttr !== null) {
+                    const idxNum = parseInt(idxAttr, 10);
+                    headerDiv.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        // 切换当前文件的展开状态（互不干扰，但为了更好的体验，点击即切换该文件，其余保持不变）
+                        if (expandedFilesMap[idxNum]) {
+                            expandedFilesMap[idxNum] = false;
+                        } else {
+                            expandedFilesMap[idxNum] = true;
+                        }
+                        // 重新渲染文件视图
+                        renderFilesView();
+                    });
+                }
+            }
+        });
+        
+        // 绑定一键收起所有内容按钮
+        const collapseBtn = document.getElementById('collapseAllFilesBtn');
+        if (collapseBtn) {
+            collapseBtn.addEventListener('click', () => {
+                // 将所有文件的展开状态置为 false
+                for (let i = 0; i < coreFiles.length; i++) {
+                    expandedFilesMap[i] = false;
+                }
+                renderFilesView();
+            });
+        }
+    }
+    
+    // 激活清关流程 (重置文件相关标志)
+    function activateFlowSop() {
+        currentFlowActive = true;
+        filesDisplayed = false;
+        // 重置高亮索引从0开始（欧洲关境）
+        currentStepIndex = 0;
+        // 默认未点击任何卡片时，没有详情展示（符合需求：点击图标才展示详情）
+        selectedStepDetail = null;
+        // 清除文件展开记录
+        expandedFilesMap = {};
+        render();
+    }
+    
+    // 激活文件查询模块
+    function activateFilesQuery() {
+        currentFlowActive = false;
+        filesDisplayed = true;
+        // 重置文件展开状态，默认全部收起（干净）
+        expandedFilesMap = {};
+        selectedStepDetail = null;
+        render();
+    }
+    
+    // 绑定主按钮事件
+    showSopBtn.addEventListener('click', () => {
+        activateFlowSop();
+    });
+    
+    queryFilesBtn.addEventListener('click', () => {
+        activateFilesQuery();
+    });
+    
+    // 初始状态: 未点击任何按钮，显示默认空状态
+    currentFlowActive = false;
+    filesDisplayed = false;
+    render();
+</script>
+</body>
+</html>
